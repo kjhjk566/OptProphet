@@ -35,7 +35,7 @@ OptProphet-model
 
 ### Dataset Overview
 
-All data in this project are synthetic time-series readings generated to demonstrate pipeline functionality rather than represent actual transceiver measurements. Each sequence captures seventeen electrical and optical metrics (e.g. current, temperature, voltage, TX/RX power and multi-channel bias readings) along with two labels—`subhealth_label` (healthy vs. sub-healthy) and `failure_type` (soft failure, hard failure).
+All data in this project are synthetic time-series readings generated to demonstrate pipeline functionality rather than represent actual transceiver measurements. Due to confidentiality agreements, we are unable to release real-world datasets. Each sequence captures seventeen electrical and optical metrics (e.g. current, temperature, voltage, TX/RX power and multi-channel bias readings) along with two labels—`subhealth_label` (healthy vs. sub-healthy) and `failure_type` (soft failure, hard failure).
 
 
 ### Directory Description
@@ -43,10 +43,10 @@ All data in this project are synthetic time-series readings generated to demonst
 The top‐level `data` folder organizes both raw and processed files into separate subdirectories for offline (historical) and online (real‐time) streams, plus intermediate outputs. Within each of these (`offline`, `offline_tsfel`, `offline_feature`, `online`, `online_tsfel`, `online_feature`, `train_task`), there are three class‐specific subfolders:
 
   ```
-  <stage_folder>/
-  ├── normal                                    # healthy samples
-  ├── hard                                      # hard‐failure samples
-  └── soft                                      # soft‐failure samples
+<stage_folder>/
+├── normal                                    # healthy samples
+├── hard                                      # hard‐failure samples
+└── soft                                      # soft‐failure samples
   ```
 
 ### Sample Data Format
@@ -54,8 +54,8 @@ The top‐level `data` folder organizes both raw and processed files into separa
 Each CSV in offline/ or online/ begins with a header containing a timestamp, a set of metric columns (typically several electrical and optical features), and two label columns. For example:
 
   ```csv
-  timestamp,Current,Temperature,Voltage,CurrentTXPower,…,CurrentMultiBias4,subhealth_label,failure_type
-  2025-05-05 16:35:14.419676,12.08,47.54,3.13,…,12.64,0,0
+timestamp,Current,Temperature,Voltage,CurrentTXPower,…,CurrentMultiBias4,subhealth_label,failure_type
+2025-05-05 16:35:14.419676,12.08,47.54,3.13,…,12.64,0,0
   ```
 
 ---
@@ -65,6 +65,7 @@ Each CSV in offline/ or online/ begins with a header containing a timestamp, a s
 ### 1. Clone and Install Dependencies
 
 1. Download the project
+
 2. Install dependencies:
 
    ```bash
@@ -77,21 +78,21 @@ Each CSV in offline/ or online/ begins with a header containing a timestamp, a s
 
 All pipeline parameters can be customized either via command-line flags or by editing a YAML configuration file. By default, `main.py` accepts the following options:
 
-| Parameter                | Description                                    | Default                                                                                              |
-| ------------------------ | ---------------------------------------------- |------------------------------------------------------------------------------------------------------|
-| `--window_size`          | Sliding window size for TSFEL                  | `24`                                                                                                 |
-| `--step_size`            | Step size for TSFEL window                     | `1`                                                                                                  |
-| `--first_feature`        | First column index used in data augmentation   | `0`                                                                                                  |
-| `--last_feature`         | Last column index used in data augmentation    | `2311`                                                                                               |
-| `--train_name`           | Output folder name for augmented training data | `train_task`                                                                                         |
-| `--offline_input_dirs`   | Raw offline data directories                   | `['./data/offline/hard/', './data/offline/soft/', './data/offline/normal/']`                         |
-| `--offline_output_dirs`  | Output dirs for offline TSFEL features         | `['./data/offline_tsfel/hard/', './data/offline_tsfel/soft/', './data/offline_tsfel/normal/']`       |
-| `--online_input_dirs`    | Raw online data directories                    | `['./data/online/hard/', './data/online/soft/', './data/online/normal/']`                            |
-| `--online_output_dirs`   | Output dirs for online TSFEL features          | `['./data/online_tsfel/hard/', './data/online_tsfel/soft/', './data/online_tsfel/normal/']`          |
+| Parameter                | Description                                    | Default                                                      |
+| ------------------------ | ---------------------------------------------- | ------------------------------------------------------------ |
+| `--window_size`          | Sliding window size for TSFEL                  | `24`                                                         |
+| `--step_size`            | Step size for TSFEL window                     | `1`                                                          |
+| `--first_feature`        | First column index used in data augmentation   | `0`                                                          |
+| `--last_feature`         | Last column index used in data augmentation    | `2311`                                                       |
+| `--train_name`           | Output folder name for augmented training data | `train_task`                                                 |
+| `--offline_input_dirs`   | Raw offline data directories                   | `['./data/offline/hard/', './data/offline/soft/', './data/offline/normal/']` |
+| `--offline_output_dirs`  | Output dirs for offline TSFEL features         | `['./data/offline_tsfel/hard/', './data/offline_tsfel/soft/', './data/offline_tsfel/normal/']` |
+| `--online_input_dirs`    | Raw online data directories                    | `['./data/online/hard/', './data/online/soft/', './data/online/normal/']` |
+| `--online_output_dirs`   | Output dirs for online TSFEL features          | `['./data/online_tsfel/hard/', './data/online_tsfel/soft/', './data/online_tsfel/normal/']` |
 | `--offline_feature_dirs` | Output dirs for offline Transformer features   | `['./data/offline_feature/hard/', './data/offline_feature/soft/', './data/offline_feature/normal/']` |
-| `--online_feature_dirs`  | Output dirs for online Transformer features    | `['./data/online_feature/hard/', './data/online_feature/soft/', './data/online_feature/normal/']`    |
-| `--stacked_output_path`  | Path for offline stacked feature file          | `./data/feature_two_step_train.npz`                                                                  |
-| `--result_dirs`          | Directories to save results                    | `['./result/hard/', './result/soft/', './result/normal/']`                                           |
+| `--online_feature_dirs`  | Output dirs for online Transformer features    | `['./data/online_feature/hard/', './data/online_feature/soft/', './data/online_feature/normal/']` |
+| `--stacked_output_path`  | Path for offline stacked feature file          | `./data/feature_two_step_train.npz`                          |
+| `--result_dirs`          | Directories to save results                    | `['./result/hard/', './result/soft/', './result/normal/']`   |
 
 ---
 
