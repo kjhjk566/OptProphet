@@ -312,7 +312,6 @@ def feature_weighted_oversampling(
     same_type_nn[:, 1] = distances[:, 1]
     same_type_nn[:, 2] = same_type_indices
 
-    range_features = range(start_feature_idx, end_feature_idx)
     target_iqr = cluster_iqrs[target_label]
     max_iqr = np.max(target_iqr)
 
@@ -331,14 +330,17 @@ def feature_weighted_oversampling(
 
             seed_sample_index = np.where(np.all(data == seed_sample, axis=1))[0]
             nn_index_in_same_type = np.where(same_type_nn[:, 2] == seed_sample_index)[0]
-            nn_sample_in_same_type = data[nn_index_in_same_type].T
+            nn_sample_in_same_type = data[nn_index_in_same_type][0]
 
-            for feature in range_features:
-                iqr_k = target_iqr[feature - start_feature_idx]
-                upper_bound = iqr_k / (max_iqr + 1e-6)
-                upper_bound = np.asarray(upper_bound, dtype=np.float64)
-                lambda_k = np.random.uniform(0, upper_bound)
-                new_sample[feature] = (1 - lambda_k) * seed_sample[feature] + lambda_k * nn_sample_in_same_type[feature]
+            feat_idxs = np.arange(start_feature_idx, end_feature_idx + 1)
+            seed_feats = seed_sample[feat_idxs]
+            nn_feats = nn_sample_in_same_type[feat_idxs]
+
+            iqrs = target_iqr
+            upper = iqrs / (max_iqr + 1e-6)
+            lambdas = np.random.rand(upper.shape[0]) * upper
+
+            new_sample[feat_idxs] = (1 - lambdas) * seed_feats + lambdas * nn_feats
 
             new_sample[-7:] = seed_sample[-7:]
 
@@ -361,15 +363,19 @@ def feature_weighted_oversampling(
             ).max(axis=1).ravel()
             new_sample_distances[-1] = np.inf
 
-            for idx, distance in enumerate(new_sample_distances[:-1]):
-                if distance < data[idx, nn_distances_col]:
-                    data[idx, nn_distances_col] = distance
-                    data[idx, nn_indices_col] = len(data) - 1
-                    if data[idx, type_labels_col] == target_label:
-                        neighbor_row = np.where(same_type_nn[:, 2] == idx)[0]
-                        same_type_nn[neighbor_row, 0] = len(data) - 1
-                        same_type_nn[neighbor_row, 1] = distance
-                        same_type_nn[neighbor_row, 2] = idx
+            mask = new_sample_distances[:-1] < data[:-1, nn_distances_col]
+            idxs = np.nonzero(mask)[0]
+            data[idxs, nn_distances_col] = new_sample_distances[idxs]
+            data[idxs, nn_indices_col] = len(data) - 1
+
+            same_type_mask = mask & (data[:-1, type_labels_col] == target_label)
+            affected_idxs = np.nonzero(same_type_mask)[0]
+            row_mask = np.isin(same_type_nn[:, 2], affected_idxs)
+
+            same_type_nn[row_mask, 0] = len(data) - 1
+
+            orig_idxs = same_type_nn[row_mask, 2].astype(int)
+            same_type_nn[row_mask, 1] = new_sample_distances[orig_idxs]
 
             nn_distance_for_new_sample = float(np.min(new_sample_distances))
             nn_index_for_new_sample = np.argmin(new_sample_distances).item()
