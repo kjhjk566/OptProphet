@@ -1,4 +1,4 @@
-# Forewarned is Forearmed: Joint Prediction and Classification of Optical Transceiver Failures in Large-Scale LLM Training Clusters
+# Nip in the Bud: Joint Prediction and Classification of Optical Network Failures in Large-Scale LLM Training Clusters
 
 ## Project Introduction
 
@@ -17,15 +17,12 @@ OptProphet-model
 │   ├── online                                  # Raw online CSV data (real-time samples)
 │   ├── online_tsfel                            # TSFEL features extracted from online data
 │   ├── online_feature                          # Transformer features from online data
-│   ├── feature_two_step_train.npz              # Intermediate stacked feature file
-│   └── train_task                              # Augmented training data for MMOE
 ├── result                                      # MMOE final inference results
 ├── tsfel_feature_extractor.py                  # TSFEL feature extraction module
 ├── transformer.py                              # Transformer encoder and feature stacking
 ├── data_augmentation.py                        # Feature-space sampling for class balancing
 ├── MOE.py                                      # MMOE training and inference module
 ├── main.py                                     # Full pipeline: TSFEL → Transformer → Augmentation → MMOE
-├── model.pth                                   # Saved MMOE model
 └── requirements.txt                            # Python package requirements
 ```
 
