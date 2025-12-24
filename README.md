@@ -1,4 +1,4 @@
-# Nip in the Bud: Joint Prediction and Classification of Optical Network Failures in Large-Scale LLM Training Clusters
+# Nip in the Bud: Joint Prediction and Classification of Optical Transceiver Failures in Large-Scale LLM Training Clusters
 
 ## Project Introduction
 
